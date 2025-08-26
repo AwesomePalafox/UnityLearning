@@ -15,12 +15,15 @@ public class PlayerController : MonoBehaviour
 
     private float lastAttackTime;
 
+    private CharacterStats characterStats;
+
 
 
     void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+        characterStats = GetComponent<CharacterStats>();
     }
 
     void Start()
@@ -64,7 +67,7 @@ public class PlayerController : MonoBehaviour
 
         transform.LookAt(attackAimedTarget.transform);
 
-        while (Vector3.Distance(attackAimedTarget.transform.position, transform.position) > 1)
+        while (Vector3.Distance(attackAimedTarget.transform.position, transform.position) > characterStats.attackData.attackRange)
         {
             agent.destination = attackAimedTarget.transform.position;
             yield return null;
@@ -76,9 +79,10 @@ public class PlayerController : MonoBehaviour
         if (lastAttackTime < 0)
         {
             anim.SetTrigger("Attack");
+            anim.SetBool("Chritical", characterStats.isCritical);
             
             // 重置冷却时间
-            lastAttackTime = 0.5f;
+            lastAttackTime = characterStats.attackData.coolDown;
         }
 
     }

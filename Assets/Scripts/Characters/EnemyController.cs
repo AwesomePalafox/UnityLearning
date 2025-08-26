@@ -43,6 +43,10 @@ public class EnemyController : MonoBehaviour
 
     private Vector3 guardPosition;
 
+    private CharacterStats characterStats;
+
+    private float lastAttackTime;
+
 
 
     void Awake()
@@ -56,6 +60,8 @@ public class EnemyController : MonoBehaviour
         guardPosition = transform.position;
 
         remainLookAtTime = lookAtTime;
+
+        characterStats = GetComponent<CharacterStats>();
     }
 
     void Start()
@@ -69,14 +75,15 @@ public class EnemyController : MonoBehaviour
             enemyStates = EnemyStates.PATROL;
             GetNewWayPoint();
         }
-            
-        
+
+
     }
 
     void Update()
     {
         SwitchStates();
         SwitchAnimation();
+        lastAttackTime -= Time.deltaTime;
     }
 
 
@@ -85,6 +92,7 @@ public class EnemyController : MonoBehaviour
         anim.SetBool("Walk", isWalk);
         anim.SetBool("Chase", isChase);
         anim.SetBool("Follow", isFollow);
+        anim.SetBool("Critical", characterStats.isCritical);
     }
 
     void SwitchStates()
@@ -110,13 +118,13 @@ public class EnemyController : MonoBehaviour
 
                 // 判断是否到了随机巡逻点。
 
-                if (Vector3.Distance(wayPoint,transform.position) <= agent.stoppingDistance)
+                if (Vector3.Distance(wayPoint, transform.position) <= agent.stoppingDistance)
                 {
                     isWalk = false;
                     if (remainLookAtTime > 0)
                         remainLookAtTime -= Time.deltaTime;
                     else
-                    GetNewWayPoint();
+                        GetNewWayPoint();
                 }
                 else
                 {
@@ -124,7 +132,7 @@ public class EnemyController : MonoBehaviour
                     agent.destination = wayPoint;
                 }
 
-            break;
+                break;
 
 
             case EnemyStates.CHASE:
@@ -141,6 +149,25 @@ public class EnemyController : MonoBehaviour
                 // 3:在攻击范围内则攻击
                 // 4：适配动画
 
+                if (TargetInAttackRange() || TargetInSkillRange())
+                {
+                    isFollow = false;
+                    agent.isStopped = true;
+
+                    if (lastAttackTime < 0)
+                    {
+                        lastAttackTime = characterStats.attackData.coolDown;
+
+                        // 用 random value 暴击判断 (与 CharacterState 中联动)
+                        characterStats.isCritical = Random.value < characterStats.attackData.criticalChance;
+
+                        // 如果 random value 生成的随机数小于暴击率 （criticalChance） 则 isCritical （CharacterState 中的 bool 值 返回 true）
+
+                        //进行攻击
+                        Attack();
+                    }
+                }
+
                 break;
 
 
@@ -149,6 +176,24 @@ public class EnemyController : MonoBehaviour
 
         }
     }
+
+    void Attack()
+    {
+        transform.LookAt(EnemyAttackTarget.transform);
+        if (TargetInAttackRange())
+        {
+            // 近距离攻击动画
+            anim.SetTrigger("Attack");
+        }
+
+        if (TargetInSkillRange())
+        {
+            // 远距离攻击动画
+            anim.SetTrigger("Skill");
+        }
+
+    }
+
 
     bool FoundPlayer()
     {
@@ -169,17 +214,28 @@ public class EnemyController : MonoBehaviour
         return false;
 
     }
+    bool TargetInAttackRange()
+    {
+        if (EnemyAttackTarget != null) return Vector3.Distance(EnemyAttackTarget.transform.position, transform.position) <= characterStats.attackData.attackRange;
+        else return false;
+    }
+
+    bool TargetInSkillRange()
+    {
+        if (EnemyAttackTarget != null) return Vector3.Distance(EnemyAttackTarget.transform.position, transform.position) <= characterStats.attackData.skillRange;
+        else return false;
+    }
+ 
 
     void ChaseActions()
     {
-
 
 
         if (!FoundPlayer())
         {
             //2.拉脱范围回到上一个状态
             isFollow = false;
-            
+
             if (remainLookAtTime > 0)
             {
                 agent.destination = transform.position;
@@ -189,11 +245,12 @@ public class EnemyController : MonoBehaviour
                 enemyStates = EnemyStates.GUARD;
             else
                 enemyStates = EnemyStates.PATROL;
-            
+
         }
         else
         {
             isFollow = true;
+            agent.isStopped = false;
             agent.destination = EnemyAttackTarget.transform.position;
         }
     }
