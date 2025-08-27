@@ -17,6 +17,8 @@ public class PlayerController : MonoBehaviour
 
     private CharacterStats characterStats;
 
+    private bool isDeath;
+
 
 
     void Awake()
@@ -35,6 +37,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        isDeath = characterStats.CurrentHealth == 0; // 布尔值判断  == 0  等于 返回 true, 不等于返回 false.
         SwitchAnimation();
 
         lastAttackTime -= Time.deltaTime;
@@ -43,6 +46,7 @@ public class PlayerController : MonoBehaviour
     private void SwitchAnimation()
     {
         anim.SetFloat("Speed", agent.velocity.sqrMagnitude);
+        anim.SetBool("Death", isDeath);
     }
 
     public void MoveToTarget(Vector3 target)
@@ -57,11 +61,12 @@ public class PlayerController : MonoBehaviour
         if (target != null)
         {
             attackAimedTarget = target;
-            StartCoroutine(MoveToAttackTarget());
+            characterStats.isCritical = UnityEngine.Random.value < characterStats.attackData.criticalChance;
+            StartCoroutine(MoveToAttackTarget()); 
         }
     }
 
-    IEnumerator MoveToAttackTarget()
+    IEnumerator MoveToAttackTarget() // 应用于 EventAttack → void Start MouseManager
     {
         agent.isStopped = false;
 
@@ -70,8 +75,8 @@ public class PlayerController : MonoBehaviour
         while (Vector3.Distance(attackAimedTarget.transform.position, transform.position) > characterStats.attackData.attackRange)
         {
             agent.destination = attackAimedTarget.transform.position;
-            yield return null;
-        }
+            yield return null; // yield return null;：这是协程的关键部分，表示“等待一帧”，然后继续执行循环。这样可以在每一帧都重新评估角色与目标之间的距离，直到角色进入攻击范围
+        } // 这段代码的作用是：让角色不断向攻击目标移动，直到进入攻击范围为止。
 
         agent.isStopped = true;
         // Attack
@@ -80,10 +85,21 @@ public class PlayerController : MonoBehaviour
         {
             anim.SetTrigger("Attack");
             anim.SetBool("Chritical", characterStats.isCritical);
-            
+
             // 重置冷却时间
             lastAttackTime = characterStats.attackData.coolDown;
         }
 
     }
+
+    // Animation Event
+
+    void Hit()
+    {
+        var targetStats = attackAimedTarget.GetComponent<CharacterStats>();
+        targetStats.TakeDamage(characterStats, targetStats);
+    }
+
+
+
 }

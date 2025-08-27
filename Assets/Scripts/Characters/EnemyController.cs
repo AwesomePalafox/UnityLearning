@@ -21,7 +21,9 @@ public class EnemyController : MonoBehaviour
 
     [Header("Basic Settings")]
     public float sightRadius;
-    [SerializeField] EnemyStates States;
+    // [SerializeField] EnemyStates States;
+
+     public   bool isGuard;
     [SerializeField] private float moveSpeedTest;
     // 上变这个是自己测试用的，这样写可以在inspector 中显示出来这个参数
 
@@ -36,7 +38,7 @@ public class EnemyController : MonoBehaviour
     private GameObject EnemyAttackTarget;
 
     // bool 值配合动画转换
-    bool isGuard;
+
     bool isWalk;
     bool isChase;
     bool isFollow;
@@ -46,6 +48,12 @@ public class EnemyController : MonoBehaviour
     private CharacterStats characterStats;
 
     private float lastAttackTime;
+
+    private Quaternion guardRotation;
+
+    bool isDeath;
+
+    private Collider coll;
 
 
 
@@ -59,9 +67,13 @@ public class EnemyController : MonoBehaviour
 
         guardPosition = transform.position;
 
+        guardRotation = transform.rotation;
+
         remainLookAtTime = lookAtTime;
 
         characterStats = GetComponent<CharacterStats>();
+
+        coll = GetComponent<Collider>();
     }
 
     void Start()
@@ -84,6 +96,9 @@ public class EnemyController : MonoBehaviour
         SwitchStates();
         SwitchAnimation();
         lastAttackTime -= Time.deltaTime;
+
+        if (characterStats.CurrentHealth == 0)
+         isDeath = true; 
     }
 
 
@@ -93,21 +108,40 @@ public class EnemyController : MonoBehaviour
         anim.SetBool("Chase", isChase);
         anim.SetBool("Follow", isFollow);
         anim.SetBool("Critical", characterStats.isCritical);
+        anim.SetBool("Death", isDeath);
     }
 
     void SwitchStates()
     {
+        if (isDeath)
+            enemyStates = EnemyStates.DEAD;
 
         // 如果发现player, 切换到chase 模式
 
-        if (FoundPlayer())
-        {
-            enemyStates = EnemyStates.CHASE;
-            Debug.Log("找到player");
-        }
+            else if (FoundPlayer()) // 用 else if 是设立前提： 非死亡状态下执行下列语句
+            {
+                enemyStates = EnemyStates.CHASE;
+                Debug.Log("找到player");
+            }
+
+
         switch (enemyStates)
         {
             case EnemyStates.GUARD:
+
+                isChase = false;
+                if (transform.position != guardPosition)
+                {
+                    isWalk = true;
+                    agent.isStopped = false;
+                    agent.destination = guardPosition;
+
+                    if (Vector3.SqrMagnitude(guardPosition - transform.position) <= agent.stoppingDistance)
+                    {
+                        isWalk = false;
+                        transform.rotation = Quaternion.Lerp(transform.rotation, guardRotation, 0.01f); // Lear : 实现缓慢变化的 自有函数
+                    }
+                }
                 break;
 
             case EnemyStates.PATROL:
@@ -172,6 +206,12 @@ public class EnemyController : MonoBehaviour
 
 
             case EnemyStates.DEAD:
+
+                coll.enabled = false; // 将collider 关闭，因为 Mouse Manager 中会检测 Collider (Line 62) 此行命令会使死亡单位无法被点击从而导致“攻击尸体”现象。
+                agent.enabled = false; // 将 agent 关闭，则 NavMeshAgent 功能无法启用，作用：停止导航行为、节省性能、防止冲突或错误如果角色死亡后仍然尝试移动，可能会导致动画或物理上的冲突。禁用 NavMeshAgent 可以确保角色保持静止状态。
+
+                Destroy(gameObject, 2f);
+
                 break;
 
         }
@@ -225,7 +265,7 @@ public class EnemyController : MonoBehaviour
         if (EnemyAttackTarget != null) return Vector3.Distance(EnemyAttackTarget.transform.position, transform.position) <= characterStats.attackData.skillRange;
         else return false;
     }
- 
+
 
     void ChaseActions()
     {
@@ -258,7 +298,7 @@ public class EnemyController : MonoBehaviour
     void GetNewWayPoint()
     {
 
-        remainLookAtTime = lookAtTime - Random.Range(0f, 5f);;
+        remainLookAtTime = lookAtTime - Random.Range(0f, 5f); ;
 
 
         float randomX = Random.Range(-patrolRange, patrolRange);
@@ -269,8 +309,8 @@ public class EnemyController : MonoBehaviour
         NavMeshHit hit;
 
         wayPoint = NavMesh.SamplePosition(randomPoint, out hit, patrolRange, 1) ? hit.position : transform.position;
-        
-        
+
+
     }
 
 
@@ -282,6 +322,18 @@ public class EnemyController : MonoBehaviour
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position, patrolRange);
 
+    }
+
+
+    // Animation Event
+
+    void Hit()
+    {
+        if (EnemyAttackTarget != null)
+        {
+            var targetStats = EnemyAttackTarget.GetComponent<CharacterStats>();
+            targetStats.TakeDamage(characterStats, targetStats);
+        }
     }
 }
  

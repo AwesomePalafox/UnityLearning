@@ -44,17 +44,20 @@ public class CharacterStats : MonoBehaviour
 
     #region Character Combat
 
-    public void TakeDamage(CharacterStats attacker, CharacterStats defender)
+    public void TakeDamage(CharacterStats attacker, CharacterStats defender) //新建的一个函数， 在 PlayerController 和 EnemyController 中有引用
     {
         int damage = Mathf.Max(attacker.CurrentDamage() - defender.CurrentDefence, 0); // 若防大于攻，确保掉血值不会小于0
         CurrentHealth = Mathf.Max(CurrentHealth - damage, 0); // Current Health 不会小于0
 
-
+        if (isCritical)
+        {
+            defender.GetComponent<Animator>().SetTrigger("Hit"); // 这里的 Hit 关键字，在 Player 和 Enemy 的动画机里，关键字均为“Hit”。所以在总控里可以一步解决。
+        }
         // TODO: Update UI
         // TODO: 经验 Update
     }
 
-    private int CurrentDamage()
+    private int CurrentDamage() // 由 TakeDamage 引用的一个计算性函数
     {
         float coreDamage = UnityEngine.Random.Range(attackData.minDamage, attackData.maxDamage);
 
