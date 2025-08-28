@@ -7,9 +7,8 @@ using System;
 
 // [System.Serializable]
 // public class EventVector3 : UnityEvent<Vector3> { }
-public class MouseManager : MonoBehaviour
+public class MouseManager : Singleton<MouseManager>
 {
-    public static MouseManager Instance;
 
     public Texture2D pointto, doorway, attack, target, arrownormal;
     
@@ -18,14 +17,11 @@ public class MouseManager : MonoBehaviour
     public event Action<Vector3> OnMouseClicked;
 
     public event Action<GameObject> OnEnemyClicked;
-    
 
-    void Awake()
+    protected override void Awake()
     {
-        if (Instance != null)
-            Destroy(gameObject);
-
-        Instance = this;
+        base.Awake();                       // 基于原有父类的函数方法 额外运行 即保留 Singleton 中的 Awake 里的所有运行
+        // DontDestroyOnLoad(this);
     }
 
     void Update()
