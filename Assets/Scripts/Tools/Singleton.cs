@@ -12,7 +12,7 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T> // 通常的 �
                                                                  // 这种写法的目的是为了让每个继承 Singleton<T> 的类都能拥有自己的单例实例，并且类型安全。
 
 {
-    private static T instance;
+    private static T instance;                                  // 此处 T 可以代表 MouseManager, InventoryManager， QuestManager 等
 
     public static T Instance
     {
@@ -24,9 +24,9 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T> // 通常的 �
     protected virtual void Awake()                                  // protected 表示这个 方法 只能在当前类或其子类中访问   virtual 允许子类重写这个方法
     {
         if (instance != null)
-            Destroy(gameObject);
+        { Destroy(gameObject); }
         else
-            instance = (T)this;                                        // (T)this 是类型转换，把当前对象转换为泛型类型 T。
+        { instance = (T)this; }                                   // (T)this 是类型转换，把当前对象转换为泛型类型 T。
     }
 
                                                                 // 泛型方式可以复用这个单例逻辑到多个类，比如 GameManager、AudioManager 等。

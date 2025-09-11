@@ -7,7 +7,7 @@ using UnityEngine.AI;
 
 public enum EnemyStates { GUARD, PATROL, CHASE, DEAD }
 [RequireComponent(typeof(NavMeshAgent))]
-public class EnemyController : MonoBehaviour
+public class EnemyController : MonoBehaviour, IEndGameObserver
 
 
 {
@@ -23,7 +23,7 @@ public class EnemyController : MonoBehaviour
     public float sightRadius;
     // [SerializeField] EnemyStates States;
 
-     public   bool isGuard;
+    public bool isGuard;
     [SerializeField] private float moveSpeedTest;
     // 上变这个是自己测试用的，这样写可以在inspector 中显示出来这个参数
 
@@ -55,6 +55,8 @@ public class EnemyController : MonoBehaviour
 
     private Collider coll;
 
+    public bool playerDead;
+
 
 
     void Awake()
@@ -76,6 +78,7 @@ public class EnemyController : MonoBehaviour
         coll = GetComponent<Collider>();
     }
 
+
     void Start()
     {
         if (isGuard)
@@ -88,17 +91,34 @@ public class EnemyController : MonoBehaviour
             GetNewWayPoint();
         }
 
-
     }
 
+    void OnEnable()
+        {
+            GameManager.Instance.AddObserver(this);
+        }
+
+    void OnDisable()
+        {
+            GameManager.Instance.RemoveObserver(this);
+        }
+
+
     void Update()
+
     {
-        SwitchStates();
-        SwitchAnimation();
-        lastAttackTime -= Time.deltaTime;
 
         if (characterStats.CurrentHealth == 0)
-         isDeath = true; 
+            isDeath = true;
+
+        if (!playerDead)
+        {
+            SwitchStates();
+            SwitchAnimation();
+            lastAttackTime -= Time.deltaTime;
+        }
+
+
     }
 
 
@@ -118,11 +138,11 @@ public class EnemyController : MonoBehaviour
 
         // 如果发现player, 切换到chase 模式
 
-            else if (FoundPlayer()) // 用 else if 是设立前提： 非死亡状态下执行下列语句
-            {
-                enemyStates = EnemyStates.CHASE;
-                Debug.Log("找到player");
-            }
+        else if (FoundPlayer()) // 用 else if 是设立前提： 非死亡状态下执行下列语句
+        {
+            enemyStates = EnemyStates.CHASE;
+            Debug.Log("找到player");
+        }
 
 
         switch (enemyStates)
@@ -335,5 +355,17 @@ public class EnemyController : MonoBehaviour
             targetStats.TakeDamage(characterStats, targetStats);
         }
     }
+
+    public void EndNotify()
+    {
+        // 执行听到该广播后执行的行动，如enemy获胜动画、停止移动、停止Agent
+        anim.SetBool("Win", true);
+        isChase = false;
+        isWalk = false;
+        EnemyAttackTarget = null;
+
+
+    }
+    
 }
  

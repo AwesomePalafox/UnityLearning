@@ -40,6 +40,10 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         isDeath = characterStats.CurrentHealth == 0; // 布尔值判断  == 0  等于 返回 true, 不等于返回 false.
+
+        if (isDeath)
+            GameManager.Instance.NotifyObservers();
+
         SwitchAnimation();
 
         lastAttackTime -= Time.deltaTime;
@@ -64,7 +68,7 @@ public class PlayerController : MonoBehaviour
         {
             attackAimedTarget = target;
             characterStats.isCritical = UnityEngine.Random.value < characterStats.attackData.criticalChance;
-            StartCoroutine(MoveToAttackTarget()); 
+            StartCoroutine(MoveToAttackTarget());
         }
     }
 
