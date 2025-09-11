@@ -94,14 +94,14 @@ public class EnemyController : MonoBehaviour, IEndGameObserver
     }
 
     void OnEnable()
-        {
-            GameManager.Instance.AddObserver(this);
-        }
+    {
+        GameManager.Instance.AddObserver(this);
+    }
 
     void OnDisable()
-        {
-            GameManager.Instance.RemoveObserver(this);
-        }
+    {
+        GameManager.Instance.RemoveObserver(this);
+    }
 
 
     void Update()
@@ -367,5 +367,7 @@ public class EnemyController : MonoBehaviour, IEndGameObserver
 
     }
     
+    
+
 }
  

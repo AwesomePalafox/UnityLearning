@@ -2,6 +2,49 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
+
+
+public class Singleton<T> : MonoBehaviour where T : Singleton<T> 
+
+{
+    private static T instance;   
+
+    public static T Instance
+    {
+        get { return instance; }
+    }
+
+
+    protected virtual void Awake()                                 
+    {
+        if (instance != null)
+            Destroy(gameObject);
+        else
+            instance = (T)this;                                   
+    }
+
+
+    public static bool IsInitialized
+    {
+        get { return instance != null; }
+    }
+
+
+
+    protected virtual void OnDestroy()            
+    {
+
+        if (instance == this)
+        {
+            instance = null;
+        }
+    }
+
+}
+
+/*
 public class Singleton<T> : MonoBehaviour where T : Singleton<T> // 通常的 泛型单例的写法
                                                                  // T 是类型参数：它代表一个占位符类型，在使用时由具体类型替代
                                                                  // <> 是泛型类型参数的语法容器
@@ -19,23 +62,23 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T> // 通常的 �
         get { return instance; }
     }
 
-                                                                    // 允许外部访问此 Private 单例模式  Get： 读入  （Set 写入）
+    // 允许外部访问此 Private 单例模式  Get： 读入  （Set 写入）
 
     protected virtual void Awake()                                  // protected 表示这个 方法 只能在当前类或其子类中访问   virtual 允许子类重写这个方法
     {
         if (instance != null)
-        { Destroy(gameObject); }
+            Destroy(gameObject);
         else
-        { instance = (T)this; }                                   // (T)this 是类型转换，把当前对象转换为泛型类型 T。
+            instance = (T)this;                                    // (T)this 是类型转换，把当前对象转换为泛型类型 T。
     }
 
-                                                                // 泛型方式可以复用这个单例逻辑到多个类，比如 GameManager、AudioManager 等。
+    // 泛型方式可以复用这个单例逻辑到多个类，比如 GameManager、AudioManager 等。
 
     public static bool IsInitialized
     {
         get { return instance != null; }
     }
-                                                                    // 这样可以避免访问 Instance 时触发自动创建，或者避免访问一个尚未初始化的单例。
+    // 这样可以避免访问 Instance 时触发自动创建，或者避免访问一个尚未初始化的单例。
 
 
     protected virtual void OnDestroy()                              // 在对象销毁时清理单例引用，防止内存泄漏或错误引用。
@@ -46,9 +89,11 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T> // 通常的 �
             instance = null;
         }
 
-                                                                    // OnDestroy() 是 Unity 生命周期方法之一 当挂载该脚本的 GameObject 被销毁时（比如场景切换或手动销毁），Unity 会自动调用这个方法
-                                                                    // if (instance == this)  检查当前对象是否就是单例实例。 
-                                                                    // 如果不清空 instance，即使对象已经销毁，Instance 仍然指向一个无效对象，可能导致运行时错误。
+        // OnDestroy() 是 Unity 生命周期方法之一 当挂载该脚本的 GameObject 被销毁时（比如场景切换或手动销毁），Unity 会自动调用这个方法
+        // if (instance == this)  检查当前对象是否就是单例实例。 
+        // 如果不清空 instance，即使对象已经销毁，Instance 仍然指向一个无效对象，可能导致运行时错误。
     }
 
 }
+*/
+
