@@ -6,12 +6,23 @@ using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
+    public CharacterData_SO templateData;
     public CharacterData_SO characterData;
 
     public AttackData_SO attackData;
 
     [HideInInspector]
     public bool isCritical;
+
+
+    void Awake()
+    {
+        if (templateData != null) characterData = Instantiate(templateData);
+        // 从 CharacterData_SO templateData 中 复制出一份 （Instantiate 一份）出来，赋给  characterData 
+        // 即使 characterData 变成 CharacterData_SO templateData 的一个副本，而不直接使用 CharacterData_SO
+    }
+
+
 
     #region Read from Data_SO
     public int MaxHealth

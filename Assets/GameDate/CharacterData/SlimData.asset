@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5db18375b6af64a2190025bb5b238087, type: 3}
   m_Name: SlimData
   m_EditorClassIdentifier: 
-  maxHealth: 30
-  currentHealth: 30
+  maxHealth: 10
+  currentHealth: 10
   baseDefence: 2
   currentDefence: 2
