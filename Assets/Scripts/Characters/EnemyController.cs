@@ -36,7 +36,7 @@ public class EnemyController : MonoBehaviour, IEndGameObserver
     public float patrolRange;
 
     private float EnemySpeed;
-    private GameObject EnemyAttackTarget;
+    protected GameObject EnemyAttackTarget;
 
     // bool 值配合动画转换
 
