@@ -233,8 +233,11 @@ public class EnemyController : MonoBehaviour, IEndGameObserver
             case EnemyStates.DEAD:
 
                 coll.enabled = false; // 将collider 关闭，因为 Mouse Manager 中会检测 Collider (Line 62) 此行命令会使死亡单位无法被点击从而导致“攻击尸体”现象。
-                agent.enabled = false; // 将 agent 关闭，则 NavMeshAgent 功能无法启用，作用：停止导航行为、节省性能、防止冲突或错误如果角色死亡后仍然尝试移动，可能会导致动画或物理上的冲突。禁用 NavMeshAgent 可以确保角色保持静止状态。
+                // agent.enabled = false;
+                // 将 agent 关闭，则 NavMeshAgent 功能无法启用，作用：停止导航行为、节省性能、防止冲突或错误如果角色死亡后仍然尝试移动，可能会导致动画或物理上的冲突。禁用 NavMeshAgent 可以确保角色保持静止状态。
+                // 此命令在第23期重设，因为涉及到 Animator 控制中， StopAgent 脚本里的报错。
 
+                agent.radius = 0;
                 Destroy(gameObject, 2f);
 
                 break;
