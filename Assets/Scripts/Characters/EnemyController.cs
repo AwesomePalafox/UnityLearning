@@ -46,7 +46,7 @@ public class EnemyController : MonoBehaviour, IEndGameObserver
 
     private Vector3 guardPosition;
 
-    private CharacterStats characterStats;
+    protected CharacterStats characterStats;
 
     private float lastAttackTime;
 
@@ -357,7 +357,7 @@ public class EnemyController : MonoBehaviour, IEndGameObserver
 
     void Hit()
     {
-        if (EnemyAttackTarget != null)
+        if (EnemyAttackTarget != null && transform.IsFacingTarget(EnemyAttackTarget.transform))
         {
             var targetStats = EnemyAttackTarget.GetComponent<CharacterStats>();
             targetStats.TakeDamage(characterStats, targetStats);

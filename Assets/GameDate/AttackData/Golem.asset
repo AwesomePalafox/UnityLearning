@@ -9,10 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5db18375b6af64a2190025bb5b238087, type: 3}
-  m_Name: Player
+  m_Script: {fileID: 11500000, guid: beb4e79c9b8c1480d980370068c086c3, type: 3}
+  m_Name: Golem
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  currentHealth: 87
-  baseDefence: 1
-  currentDefence: 2
+  attackRange: 4
+  skillRange: 0
+  coolDown: 3.5
+  minDamage: 6
+  maxDamage: 10
+  criticalMultiplier: 2
+  criticalChance: 0.2
