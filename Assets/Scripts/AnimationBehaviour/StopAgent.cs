@@ -49,7 +49,7 @@ public class StopAgent : StateMachineBehaviour
 
 
 
-
+/*
 override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animator.GetComponent<NavMeshAgent>().isStopped = false;
@@ -57,9 +57,7 @@ override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo,
 
 
 
-
-
-
+*/
 
 
 

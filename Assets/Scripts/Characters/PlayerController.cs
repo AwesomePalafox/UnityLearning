@@ -19,6 +19,8 @@ public class PlayerController : MonoBehaviour
 
     private bool isDeath;
 
+    private float stopDistance;
+
 
 
     void Awake()
@@ -26,6 +28,8 @@ public class PlayerController : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         characterStats = GetComponent<CharacterStats>();
+
+        stopDistance = agent.stoppingDistance;
     }
 
     void Start()
@@ -59,6 +63,7 @@ public class PlayerController : MonoBehaviour
     {
         StopAllCoroutines();
         if (isDeath) return;
+        agent.stoppingDistance = stopDistance;
         agent.isStopped = false;
         agent.destination = target;
     }
@@ -77,6 +82,8 @@ public class PlayerController : MonoBehaviour
     IEnumerator MoveToAttackTarget() // 应用于 EventAttack → void Start MouseManager
     {
         agent.isStopped = false;
+
+        agent.stoppingDistance = characterStats.attackData.attackRange;
 
         transform.LookAt(attackAimedTarget.transform);
 
@@ -104,10 +111,21 @@ public class PlayerController : MonoBehaviour
 
     void Hit()
     {
-        var targetStats = attackAimedTarget.GetComponent<CharacterStats>();
-        targetStats.TakeDamage(characterStats, targetStats);
+        if (attackAimedTarget.CompareTag("Attackable"))
+        {
+            if (attackAimedTarget.GetComponent<Rock>() && attackAimedTarget.GetComponent<Rock>().rockStates == Rock.RockStates.HitNothing)
+                attackAimedTarget.GetComponent<Rock>().rockStates = Rock.RockStates.HitEnemy;
+
+            attackAimedTarget.GetComponent<Rigidbody>().velocity = Vector3.one; // 用于避免 在 Rock 脚本 fixedupdate 生命周期中，判断 velocity < 1 而改变石头状态
+            attackAimedTarget.GetComponent<Rigidbody>().AddForce(transform.forward * 20, ForceMode.Impulse);
+        }
+        else
+
+        {
+            var targetStats = attackAimedTarget.GetComponent<CharacterStats>();
+            targetStats.TakeDamage(characterStats, targetStats);
+        }
+
     }
-
-
 
 }
