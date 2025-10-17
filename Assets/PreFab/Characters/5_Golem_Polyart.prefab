@@ -36,6 +36,7 @@ Transform:
   m_Children:
   - {fileID: 6473237492576733790}
   - {fileID: 6547105342220138509}
+  - {fileID: 4111985641177835593}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -53.399, z: 0}
 --- !u!95 &7675067202628652817
@@ -137,6 +138,8 @@ MonoBehaviour:
   patrolRange: 0
   playerDead: 0
   kickForce: 25
+  rockPrefab: {fileID: 0}
+  handPos: {fileID: 0}
 --- !u!1 &797907970690335892
 GameObject:
   m_ObjectHideFlags: 0
@@ -814,6 +817,37 @@ Transform:
   m_Children:
   - {fileID: 1418397660538684085}
   m_Father: {fileID: 6274180833804551816}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8495206972387859757
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4111985641177835593}
+  m_Layer: 0
+  m_Name: HealthBarPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4111985641177835593
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8495206972387859757}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3511744416943814330}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8550976008939622789
 GameObject:

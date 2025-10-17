@@ -21,6 +21,8 @@ public class Rock : MonoBehaviour
 
     private Vector3 direction;
 
+    public GameObject breakEffect;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -75,6 +77,8 @@ public class Rock : MonoBehaviour
                 {
                     var theothercolliderStats = theothercollider.gameObject.GetComponent<CharacterStats>();
                     theothercolliderStats.TakeDamage(damage, theothercolliderStats);
+
+                    Instantiate(breakEffect, transform.position, Quaternion.identity);
 
                     Destroy(gameObject);
                 }

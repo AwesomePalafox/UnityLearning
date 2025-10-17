@@ -102,6 +102,7 @@ MonoBehaviour:
   force: 35
   target: {fileID: 0}
   damage: 8
+  breakEffect: {fileID: 5248186464715479837, guid: 47a37956052d449499ff74b5f7c42b83, type: 3}
 --- !u!54 &1591311593667508419
 Rigidbody:
   m_ObjectHideFlags: 0

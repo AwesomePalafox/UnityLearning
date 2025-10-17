@@ -394,6 +394,7 @@ GameObject:
   - component: {fileID: 4805732951911392448}
   - component: {fileID: 8849745638166045713}
   - component: {fileID: 5921837630877523474}
+  - component: {fileID: 8349460999729829667}
   m_Layer: 7
   m_Name: SlimePolyart
   m_TagString: Enemy
@@ -416,6 +417,7 @@ Transform:
   m_Children:
   - {fileID: 8056987867804431969}
   - {fileID: 8189731725721318716}
+  - {fileID: 3868687662065763185}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 153.483, z: 0}
 --- !u!95 &468949015198543355
@@ -474,7 +476,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sightRadius: 8
+  isGuard: 0
   moveSpeedTest: 0
+  lookAtTime: 0
+  patrolRange: 0
+  playerDead: 0
 --- !u!65 &5921837630877523474
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -496,6 +502,53 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &8349460999729829667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7692993772366717452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cb229403768d41a9b64274fe08d5515, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  templateData: {fileID: 0}
+  characterData: {fileID: 0}
+  attackData: {fileID: 0}
+  isCritical: 0
+--- !u!1 &8327018216671724913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3868687662065763185}
+  m_Layer: 7
+  m_Name: HealthBarPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3868687662065763185
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8327018216671724913}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5584598077600908984}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8989800730393888021
 GameObject:
   m_ObjectHideFlags: 0

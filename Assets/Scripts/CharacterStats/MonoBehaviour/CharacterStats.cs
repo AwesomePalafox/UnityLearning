@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class CharacterStats : MonoBehaviour
 {
+    public event Action<int, int> UpdateHealthBarOnAttack;
     public CharacterData_SO templateData;
     public CharacterData_SO characterData;
 
@@ -19,7 +20,7 @@ public class CharacterStats : MonoBehaviour
     {
         if (templateData != null) characterData = Instantiate(templateData);
         // 从 CharacterData_SO templateData 中 复制出一份 （Instantiate 一份）出来，赋给  characterData 
-        // 即使 characterData 变成 CharacterData_SO templateData 的一个副本，而不直接使用 CharacterData_SO
+        // 即,使 characterData 变成 CharacterData_SO templateData 的一个副本，而不直接使用 CharacterData_SO
     }
 
 
@@ -64,14 +65,24 @@ public class CharacterStats : MonoBehaviour
         {
             defender.GetComponent<Animator>().SetTrigger("Hit"); // 这里的 Hit 关键字，在 Player 和 Enemy 的动画机里，关键字均为“Hit”。所以在总控里可以一步解决。
         }
-        // TODO: Update UI
-        // TODO: 经验 Update
+        // : Update UI : 
+        UpdateHealthBarOnAttack?.Invoke(CurrentHealth, MaxHealth);  // .? 判断不为空
+        // : 经验 Update
+        if (CurrentHealth <= 0)
+            // attacker.characterData.UpdateExp(characterData.killpoint);
+            GameManager.Instance.playerStats.characterData.UpdateExp(characterData.killpoint);
     }
 
     public void TakeDamage(int damage, CharacterStats defender)
     {
         int currentDamage = Mathf.Max(damage - defender.CurrentDefence, 0);
         CurrentHealth = Mathf.Max(CurrentHealth - currentDamage, 0);
+
+        UpdateHealthBarOnAttack?.Invoke(CurrentHealth, MaxHealth);
+
+        if (CurrentHealth <= 0)
+            GameManager.Instance.playerStats.characterData.UpdateExp(characterData.killpoint);
+            // 确保石头击败石头人也能拿到经验值
     }
 
     private int CurrentDamage() // 由 TakeDamage 引用的一个计算性函数
