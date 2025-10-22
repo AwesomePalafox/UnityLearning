@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Player
   m_EditorClassIdentifier: 
   maxHealth: 200
-  currentHealth: 185
+  currentHealth: 200
   baseDefence: 1
   currentDefence: 2
   killpoint: 0
   currentLevel: 1
   maxLevel: 150
   levelUpExp: 30
-  currentExp: 0
+  currentExp: 10
   levelBuff: 0.1
