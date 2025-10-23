@@ -23,11 +23,13 @@ public class PlayerHealthUI : MonoBehaviour
 
     void Update()
     {
-        UpdateHealth();
-        UpdateExp();
+       
+            UpdateHealth();
+            UpdateExp();
 
-        levelText.text = "Level  " + GameManager.Instance.playerStats.characterData.currentLevel.ToString("00");
-        // ToString 是 C# 中用于格式化数字为字符串的一种方式，常用于 Unity 中显示数字时保持统一的位数格式 "00" 表示：总共至少显示两位数，不够就补 0。
+            levelText.text = "Level  " + GameManager.Instance.playerStats.characterData.currentLevel.ToString("00");
+            // ToString 是 C# 中用于格式化数字为字符串的一种方式，常用于 Unity 中显示数字时保持统一的位数格式 "00" 表示：总共至少显示两位数，不够就补 0。
+       
     }
 
 void UpdateHealth()

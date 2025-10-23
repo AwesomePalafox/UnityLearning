@@ -21,7 +21,7 @@ public class MouseManager : Singleton<MouseManager>
     protected override void Awake()
     {
         base.Awake();                       // 基于原有父类的函数方法 额外运行 即保留 Singleton 中的 Awake 里的所有运行
-        // DontDestroyOnLoad(this);
+        DontDestroyOnLoad(this);
     }
 
     void Update()

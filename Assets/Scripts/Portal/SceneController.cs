@@ -7,9 +7,17 @@ using UnityEngine.AI;
 
 public class SceneController : Singleton<SceneController>
 {
+    public GameObject playerPrefab;
     GameObject player;
 
     NavMeshAgent playerAgent;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        DontDestroyOnLoad(this); // 切换场景时不要销毁这个组件
+    }
+
     public void TransitionToDestination(TeleportDeparture teleportDeparture)
     {
         switch (teleportDeparture.teleportType)
@@ -25,22 +33,46 @@ public class SceneController : Singleton<SceneController>
 
 
             case TeleportDeparture.TeleportType.DifferentScene:
-
+                StartCoroutine(Teleport(teleportDeparture.sceneName, teleportDeparture.destinationTag));
                 break;
         }
     }
 
 IEnumerator Teleport (string sceneName,TeleportDestination.DestinationTag destinationTag)  // 传入 的 去的点的 Tag *********
     {
-        player = GameManager.Instance.playerStats.gameObject;
-        playerAgent = player.GetComponent<NavMeshAgent>();
-        playerAgent.enabled = false;
+        // 保存数据
+        SaveManager.Instance.SavePlayerData();
 
-        player.transform.SetPositionAndRotation(GetDestination(destinationTag).transform.position, GetDestination(destinationTag).transform.rotation);
 
-        playerAgent.enabled = true;
+        if (SceneManager.GetActiveScene().name != sceneName)
+        {
+            yield return SceneManager.LoadSceneAsync(sceneName);    // yield return 是让程序运行等待
+            /*
+                        GameObject existingPlayer = GameObject.FindWithTag("Player");
 
-        yield return null;
+                        if (existingPlayer != null)
+                        {
+                            Destroy(existingPlayer);
+                        }
+            */
+            yield return Instantiate(playerPrefab, GetDestination(destinationTag).transform.position, GetDestination(destinationTag).transform.rotation);
+
+            SaveManager.Instance.LoadPlayerData();
+
+            yield break;    // 执行完上变得指令即从协程中跳出
+
+        }
+
+        else
+        {
+            player = GameManager.Instance.playerStats.gameObject;
+            playerAgent = player.GetComponent<NavMeshAgent>();
+            playerAgent.enabled = false;
+            player.transform.SetPositionAndRotation(GetDestination(destinationTag).transform.position, GetDestination(destinationTag).transform.rotation);
+            playerAgent.enabled = true;
+
+            yield return null;
+        }
     }
 
 

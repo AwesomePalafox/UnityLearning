@@ -11,13 +11,13 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
 {
     private static T instance;   
 
-    public static T Instance
+    public static T Instance    // 因为上边的是 private, 这里使他能够被外部访问
     {
         get { return instance; }
     }
 
 
-    protected virtual void Awake()                                 
+    protected virtual void Awake()           //   protected = 可在子类类中进行访问  virtual = 可在子类中进行改写                  
     {
         if (instance != null)
             Destroy(gameObject);
@@ -28,7 +28,7 @@ public class Singleton<T> : MonoBehaviour where T : Singleton<T>
 
     public static bool IsInitialized
     {
-        get { return instance != null; }
+        get { return instance != null; } // 不为空 返回 true
     }
 
 
