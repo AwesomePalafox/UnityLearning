@@ -1,9 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SaveManager : Singleton<SaveManager>
 {
+    string sceneName = ""; //设置 sceneName 初始值（字符串）为空
+
+    public string SceneName { get {return PlayerPrefs.GetString(sceneName);}}
+
+
     protected override void Awake()
     {
         base.Awake();
@@ -12,6 +18,11 @@ public class SaveManager : Singleton<SaveManager>
 
     void Update()
     {
+        if(Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneController.Instance.TransitionToMain();
+        }
+
         if (Input.GetKeyDown(KeyCode.S))
         {
             SavePlayerData();
@@ -34,6 +45,7 @@ public class SaveManager : Singleton<SaveManager>
         Load(GameManager.Instance.playerStats.characterData, GameManager.Instance.playerStats.characterData.name);
     }
 
+// 其整体来讲就是用 JsonUtility 将数据转化为字符串，再用 PlayerPrefs 类 下的功能将字符串保存在硬盘
     public void Save(Object data, string key)  // object 类是所有unity可引用的类的基类 【 unity 所有类的基类 】
     {
 
@@ -43,10 +55,16 @@ public class SaveManager : Singleton<SaveManager>
         var jsonData = JsonUtility.ToJson(data, true); // 后面那个 true 是 prettyprint, 可要可不要，久石让本地可视的数据文件更美观
 
 
+
         // PlayerPrefs  Unity 自带的存储数据的方法，在硬盘上产生文件数据
         // PlayerPrefs is a class that stores Player preferences between game sessions. It can store string, float and integer values into the user’s platform registry.
+
         PlayerPrefs.SetString(key, jsonData); // SetString	Sets a single string value for the preference identified by the given key. You can use PlayerPrefs.GetString to retrieve this value.
-        PlayerPrefs.Save(); // Saves all modified preferences.
+        PlayerPrefs.SetString(sceneName, SceneManager.GetActiveScene().name); 
+        // 使用 SetString 方法， 将 当前的 sceneName 参数保存在  SceneManager.GetActiveScene().name 之下。方便在主菜单 continue 操作时load 已保存场景
+        
+        PlayerPrefs.Save(); // PlayerPrefs. 自带函数， 将所有数据写入硬盘
+    
     }
 
     public void Load(Object data, string key)
@@ -57,7 +75,8 @@ public class SaveManager : Singleton<SaveManager>
 
         }
     }
-/*
+
+    /*
 对象 → JSON 字符串：用 JsonUtility.ToJson()。
 JSON 字符串 → 本地硬盘：用 PlayerPrefs.SetString()。
 本地硬盘 → JSON 字符串：用 PlayerPrefs.GetString()。

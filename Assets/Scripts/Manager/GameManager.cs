@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using Unity.VisualScripting;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -49,5 +50,13 @@ public class GameManager : Singleton<GameManager>
         }
 
     }
-
+    public Transform GetEntrance()
+    {
+        foreach (var item in FindObjectsOfType<TeleportDestination>())
+        {
+            if (item.destinationTag == TeleportDestination.DestinationTag.ENTER)
+                return item.transform;
+        }
+        return null;
+    }
 }
